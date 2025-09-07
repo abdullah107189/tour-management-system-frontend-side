@@ -1,6 +1,6 @@
-import { LoginForm } from "@/components/login-form";
 import { Link } from "react-router";
 import Logo from "@/assets/icons/Logo";
+import { LoginForm } from "../components/modules/authentication/login-form";
 
 export default function LoginPage() {
   return (
@@ -13,7 +13,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm name="Login"/>
+            <LoginForm />
           </div>
         </div>
       </div>

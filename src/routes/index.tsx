@@ -1,7 +1,7 @@
 import App from "@/App";
 import AdminLayout from "@/components/layout/AdminLayout";
-import LoginPage from "@/components/modules/authentication/Login";
-import RegisterPage from "@/components/modules/authentication/Register";
+import LoginPage from "@/pages/Login";
+import RegisterPage from "@/pages/Register";
 import About from "@/pages/About";
 import Analytics from "@/pages/adminPage/Analytics";
 import { createBrowserRouter } from "react-router";
