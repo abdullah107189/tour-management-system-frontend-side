@@ -1,5 +1,7 @@
 import App from "@/App";
 import AdminLayout from "@/components/layout/AdminLayout";
+import LoginPage from "@/components/modules/authentication/Login";
+import RegisterPage from "@/components/modules/authentication/Register";
 import About from "@/pages/About";
 import Analytics from "@/pages/adminPage/Analytics";
 import { createBrowserRouter } from "react-router";
@@ -14,6 +16,14 @@ const router = createBrowserRouter([
     Component: AdminLayout,
     path: "/admin",
     children: [{ path: "analytics", Component: Analytics }],
+  },
+  {
+    Component: LoginPage,
+    path: "/login",
+  },
+  {
+    Component: RegisterPage,
+    path: "/register",
   },
 ]);
 
