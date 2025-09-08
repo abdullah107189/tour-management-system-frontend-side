@@ -14,6 +14,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 const registerSchema = z
   .object({
@@ -69,7 +70,7 @@ export function RegisterForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Registration to your account</h1>
+        <h1 className="text-2xl font-bold">Register to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
           Enter your email below to login to your account
         </p>
@@ -119,7 +120,10 @@ export function RegisterForm({
                 <FormItem>
                   <FormLabel>password</FormLabel>
                   <FormControl>
-                    <Input placeholder="password" {...field} />
+                    <PasswordInput
+                      {...field}
+                      placeholder={"password"}
+                    ></PasswordInput>
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your password.
@@ -136,7 +140,10 @@ export function RegisterForm({
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Confirm Password" {...field} />
+                    <PasswordInput
+                      {...field}
+                      placeholder={"confirm password"}
+                    ></PasswordInput>
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your confirm password.
