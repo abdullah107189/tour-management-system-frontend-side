@@ -1,10 +1,11 @@
 import App from "@/App";
 import AdminLayout from "@/components/layout/AdminLayout";
-import LoginPage from "@/pages/Login";
-import RegisterPage from "@/pages/Register";
+import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 import About from "@/pages/About";
 import Analytics from "@/pages/adminPage/Analytics";
 import { createBrowserRouter } from "react-router";
+import VerifyPage from "@/pages/VerifyPage";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
     path: "/register",
   },
   {
-    Component: RegisterPage,
+    Component: VerifyPage,
     path: "/verify",
   },
 ]);

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -47,7 +47,7 @@ export function LoginForm({
   // const onSubmit: SubmitHandler<FieldValues> = (data) => {
   //   console.log(data);
   // };
-
+  const navigate = useNavigate();
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const userInfo = {
@@ -55,7 +55,6 @@ export function LoginForm({
         password: data.password,
       };
       const result = await login(userInfo).unwrap();
-      console.log(result);
 
       if (result.data) {
         toast.success("User Logged In successfully done !");
@@ -64,6 +63,7 @@ export function LoginForm({
       const error = err as FetchBaseQueryError;
       if (error?.status === 401) {
         toast.error((error.data as { message: string })?.message);
+        navigate("/verify");
       }
     }
   };
