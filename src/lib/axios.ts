@@ -2,11 +2,11 @@ import config from "@/config";
 import axios from "axios";
 export const axiosInstance = axios.create({
   baseURL: config.baseApi,
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    console.log(config);
     return config;
   },
   function (error) {

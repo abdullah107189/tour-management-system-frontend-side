@@ -15,6 +15,13 @@ export interface ILogin {
   password: string;
 }
 export interface ILoginResponse {
+  statusCodes: number;
+  success: boolean;
+  message: string;
+  data: Data;
+}
+
+export interface Data {
   accessToken: string;
   refreshToken: string;
   user: User;

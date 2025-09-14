@@ -18,6 +18,7 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import { toast } from "sonner";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import config from "@/config";
 
 const loginSchema = z.object({
   email: z
@@ -56,16 +57,21 @@ export function LoginForm({
       };
       const result = await login(userInfo).unwrap();
 
-      if (result.data) {
-        toast.success("User Logged In successfully done !");
+      console.log(result);
+      if (result.success) {
+        toast.success("You are Logged In successfully done !");
       }
     } catch (err) {
       const error = err as FetchBaseQueryError;
-      if (error?.data?.message === "User don't verified.") {
+      if (
+        (error.data as { message: string })?.message === "User don't verified."
+      ) {
         toast.error((error.data as { message: string })?.message);
         navigate("/verify", { state: data.email });
       }
-      if (error?.data?.message !== "User don't verified.") {
+      if (
+        (error.data as { message: string })?.message !== "User don't verified."
+      ) {
         toast.error((error.data as { message: string })?.message);
       }
     }
@@ -131,8 +137,12 @@ export function LoginForm({
             Or continue with
           </span>
         </div>
-        <Button variant="outline" className="w-full">
-          Register With Google
+        <Button
+          onClick={() => window.open(`${config.baseApi}auth/google`)}
+          variant="outline"
+          className="w-full"
+        >
+          Login With Google
         </Button>
       </div>
       <div className="text-center text-sm">
