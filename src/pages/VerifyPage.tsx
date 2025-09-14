@@ -28,7 +28,10 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
-import { useSendOtpMutation } from "@/redux/features/auth/auth.api";
+import {
+  useSendOtpMutation,
+  useVerifyOtpMutation,
+} from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
 export default function VerifyPage() {
   const location = useLocation();
@@ -36,7 +39,8 @@ export default function VerifyPage() {
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
-  // needed but now off for development
+  const [verifyOtp] = useVerifyOtpMutation();
+
   useEffect(() => {
     if (!email) {
       navigate("/");
@@ -55,21 +59,67 @@ export default function VerifyPage() {
       pin: "",
     },
   });
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log(data);
-  };
-  const handleConfirm = async () => {
-    const toastId = toast.loading("Sending OTP");
+
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const toastId = toast.loading("Verifying OTP");
     try {
-      setConfirmed(true);
-      const res = await sendOtp({ email }).unwrap();
+      const res = await verifyOtp({ email, otp: data.pin }).unwrap();
       if (res.success) {
-        toast.success("OTP Send", { id: toastId });
+        toast.success("OTP Verified", { id: toastId });
       }
     } catch (error) {
       console.log(error);
     }
   };
+  const handleConfirm = async () => {
+    const toastId = toast.loading("Sending OTP");
+    try {
+      const res = await sendOtp({ email }).unwrap();
+      if (res.success) {
+        toast.success(res.message, { id: toastId });
+        setConfirmed(true);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to send OTP.", { id: toastId });
+    }
+  };
+
+  // State for the resend timer
+  const [resendTimer, setResendTimer] = useState(120);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
+  // Function to handle the resend logic
+  const handleResendOtp = async () => {
+    // Disable the button immediately
+    setIsResendDisabled(true);
+
+    const toastId = toast.loading("Resending OTP");
+    try {
+      const res = await sendOtp({ email }).unwrap();
+      if (res.success) {
+        toast.success("New OTP sent!", { id: toastId });
+        // Start the timer
+        setResendTimer(120);
+      }
+    } catch (error) {
+      console.error("Failed to resend OTP", error);
+      toast.error("Failed to resend OTP.", { id: toastId });
+    }
+  };
+
+  // useEffect to manage the timer countdown
+  useEffect(() => {
+    if (isResendDisabled && resendTimer > 0) {
+      const timer = setInterval(() => {
+        setResendTimer((prevTime) => prevTime - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (resendTimer === 0) {
+      setIsResendDisabled(false);
+    }
+  }, [isResendDisabled, resendTimer]);
+
   return (
     <div className="container mx-auto grid place-content-center h-screen">
       {confirmed ? (
@@ -131,9 +181,16 @@ export default function VerifyPage() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex justify-between items-center">
             <Button form="otp-form" type="submit">
               Submit
+            </Button>
+            <Button
+              onClick={handleResendOtp}
+              disabled={isResendDisabled}
+              variant="ghost"
+            >
+              {isResendDisabled ? `Resend in ${resendTimer}s` : "Resend OTP"}
             </Button>
           </CardFooter>
         </Card>

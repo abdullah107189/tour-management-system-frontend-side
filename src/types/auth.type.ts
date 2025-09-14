@@ -1,6 +1,15 @@
+// send otp
 export interface ISendOTP {
   email: string;
 }
+
+// verify otp
+export interface IVerifyOtp {
+  email: string;
+  otp: string;
+}
+
+// login
 export interface ILogin {
   email: string;
   password: string;
