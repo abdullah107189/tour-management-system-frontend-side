@@ -4,16 +4,18 @@ export const axiosInstance = axios.create({
   baseURL: config.baseApi,
 });
 
-axios.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   function (config) {
+    console.log(config);
     return config;
   },
   function (error) {
+    console.log(error);
     return Promise.reject(error);
   }
 );
 
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   function onFulfilled(response) {
     return response;
   },

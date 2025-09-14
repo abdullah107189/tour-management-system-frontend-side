@@ -61,9 +61,12 @@ export function LoginForm({
       }
     } catch (err) {
       const error = err as FetchBaseQueryError;
-      if (error?.status === 401) {
+      if (error?.data?.message === "User don't verified.") {
         toast.error((error.data as { message: string })?.message);
-        navigate("/verify");
+        navigate("/verify", { state: data.email });
+      }
+      if (error?.data?.message !== "User don't verified.") {
+        toast.error((error.data as { message: string })?.message);
       }
     }
   };
