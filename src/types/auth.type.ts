@@ -1,0 +1,31 @@
+export interface ISendOTP {
+  email: string;
+}
+export interface ILogin {
+  email: string;
+  password: string;
+}
+export interface ILoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  isDeleted: boolean;
+  isActive: string;
+  isVerified: boolean;
+  role: string;
+  auths: Auth[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Auth {
+  provider: string;
+  providerId: string;
+  _id: string;
+}

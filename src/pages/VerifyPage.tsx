@@ -28,11 +28,14 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
+import { useSendOtpMutation } from "@/redux/features/auth/auth.api";
+import { toast } from "sonner";
 export default function VerifyPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
+  const [sendOtp] = useSendOtpMutation();
   // needed but now off for development
   useEffect(() => {
     if (!email) {
@@ -55,8 +58,17 @@ export default function VerifyPage() {
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     console.log(data);
   };
-  const handleConfirm = () => {
-    setConfirmed(true);
+  const handleConfirm = async () => {
+    const toastId = toast.loading("Sending OTP");
+    try {
+      setConfirmed(true);
+      const res = await sendOtp({ email }).unwrap();
+      if (res.success) {
+        toast.success("OTP Send", { id: toastId });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="container mx-auto grid place-content-center h-screen">
