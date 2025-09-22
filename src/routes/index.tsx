@@ -3,7 +3,7 @@ import App from "@/App";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import About from "@/pages/About";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import VerifyPage from "@/pages/VerifyPage";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { generateRoutes } from "@/utils/generateRoutes";
@@ -24,12 +24,18 @@ const router = createBrowserRouter([
   {
     Component: DashboardLayout,
     path: "/admin",
-    children: [...generateRoutes(adminSidebarItems)],
+    children: [
+      { index: true, element: <Navigate to={"/admin/analytics"}></Navigate> },
+      ...generateRoutes(adminSidebarItems),
+    ],
   },
   {
     Component: DashboardLayout,
     path: "/user",
-    children: [...generateRoutes(userSidebarItems)],
+    children: [
+      { index: true, element: <Navigate to={"/user/bookings"}></Navigate> },
+      ...generateRoutes(userSidebarItems),
+    ],
   },
   {
     Component: LoginPage,
