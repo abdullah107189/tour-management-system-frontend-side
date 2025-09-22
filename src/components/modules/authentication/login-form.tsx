@@ -60,6 +60,7 @@ export function LoginForm({
       console.log(result);
       if (result.success) {
         toast.success("You are Logged In successfully done !");
+        navigate('/')
       }
     } catch (err) {
       const error = err as FetchBaseQueryError;
