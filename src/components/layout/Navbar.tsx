@@ -26,14 +26,13 @@ const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
   { href: "/admin", label: "Dashboard", role: role.admin },
-  { href: "/super-admin", label: "Dashboard", role: role.superAdmin },
+  { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/user", label: "Dashboard", role: role.user },
 ];
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
   const { data: userData } = useUserInfoQuery(undefined);
-  console.log(userData);
   const [logout] = useLogoutMutation();
   const handleLogout = async () => {
     await logout(undefined);
@@ -96,16 +95,15 @@ export default function Navbar() {
           </Popover>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
-              <Logo />
-            </a>
+            <Logo />
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden">
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
-                  <>
+
+                  <div key={index}>
                     {link.role === "PUBLIC" && (
-                      <NavigationMenuItem key={index}>
+                      <NavigationMenuItem>
                         <NavigationMenuLink
                           asChild
                           className="text-muted-foreground hover:text-primary py-1.5 font-medium"
@@ -124,8 +122,10 @@ export default function Navbar() {
                         </NavigationMenuLink>
                       </NavigationMenuItem>
                     )}
-                  </>
+                  </div>
+                  
                 ))}
+
               </NavigationMenuList>
             </NavigationMenu>
           </div>
