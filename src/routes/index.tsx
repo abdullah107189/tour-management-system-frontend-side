@@ -12,6 +12,7 @@ import { userSidebarItems } from "./userSidebarItems";
 import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types";
+import NotFound from "@/pages/User/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
   {
     element: <h1>unauthorized access</h1>,
     path: "/unauthorized",
+  },
+  {
+    path: "*",
+    Component: NotFound,
   },
 ]);
 
