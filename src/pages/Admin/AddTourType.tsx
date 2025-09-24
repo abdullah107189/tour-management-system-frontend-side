@@ -1,3 +1,4 @@
+import DeleteConfirmation from "@/components/DeleteConfirmation";
 import AddTourTypeModal from "@/components/modules/Admin/TourType/AddTourTypeModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,17 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllTourTypeQuery } from "@/redux/features/TourType/tourType.api";
+import {
+  useGetAllTourTypeQuery,
+  useRemoveTourTypeMutation,
+} from "@/redux/features/TourType/tourType.api";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 export default function AddTourType() {
   const { data, isLoading } = useGetAllTourTypeQuery(undefined);
+  const [removeTourType] = useRemoveTourTypeMutation();
+
+  const handleDeleteTourType = async (id: string) => {
+    try {
+      toast.loading("Removing...");
+      const res = await removeTourType(id).unwrap();
+      toast.dismiss();
+      if (res.success) {
+        toast.success(res.message);
+      }
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to remove tour type.");
+      console.log(error);
+    }
+  };
   if (isLoading) {
     return <p>Loading...</p>;
   }
-  const handleDeleteTourType = (id: string) => {
-    console.log(id);
-  };
-  console.log(data);
   return (
     <div className="mx-auto max-w-7xl border-muted border p-2 rounded-2xl w-full">
       <div className="flex items-center justify-between my-5 px-2">
@@ -38,9 +55,13 @@ export default function AddTourType() {
             <TableRow key={item._id}>
               <TableCell>{item.name}</TableCell>
               <TableCell className="flex justify-end">
-                <Button onClick={() => handleDeleteTourType(item._id)}>
-                  <Trash2></Trash2>
-                </Button>
+                <DeleteConfirmation
+                  onConfirm={() => handleDeleteTourType(item._id)}
+                >
+                  <Button>
+                    <Trash2></Trash2>
+                  </Button>
+                </DeleteConfirmation>
               </TableCell>
             </TableRow>
           ))}
