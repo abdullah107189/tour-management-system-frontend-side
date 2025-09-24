@@ -27,4 +27,8 @@ export const tourTypeApi = baseApi.injectEndpoints({
     }),
   }),
 });
-export const { useAddTourTypeMutation, useGetAllTourTypeQuery , useRemoveTourTypeMutation} = tourTypeApi;
+export const {
+  useAddTourTypeMutation,
+  useGetAllTourTypeQuery,
+  useRemoveTourTypeMutation,
+} = tourTypeApi;
