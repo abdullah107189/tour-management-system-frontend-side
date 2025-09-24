@@ -21,7 +21,7 @@ export default function DeleteConfirmation({ children, onConfirm }: IProps) {
     console.log("confirm");
   };
   return (
-    <div>
+    <div className="text-right">
       <AlertDialog>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
         <AlertDialogContent>

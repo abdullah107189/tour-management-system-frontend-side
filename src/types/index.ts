@@ -22,3 +22,11 @@ export interface ISidebarItem {
   }[];
 }
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER";
+
+export interface IDivision {
+  _id?: string;
+  name: string;
+  slug: string;
+  thumbnail?: string;
+  description?: string;
+}

@@ -5,7 +5,7 @@ const NotFound: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-card to-primary-foreground text-popover font-sans p-5 box-border">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-card text-bg-accent font-sans p-5 box-border">
       <div className="text-center max-w-2xl w-full animate-fade-in">
         {/* Custom 404 Illustration */}
 
@@ -19,8 +19,8 @@ const NotFound: React.FC = () => {
         </p>
         <Link
           to="/"
-          className={`inline-block px-6 py-3 bg-popover/20 text-popover no-underline rounded-full text-lg font-bold border-2 border-popover/30 transition-all duration-300 backdrop-blur-sm ${
-            isHovered ? "bg-popover/30 -translate-y-0.5" : "bg-popover/20"
+          className={`inline-block px-6 py-3 bg-accent/20 text-bg-accent no-underline rounded-full text-lg font-bold border-2 border-bg-accent/30 transition-all duration-300 backdrop-blur-sm ${
+            isHovered ? "bg-accent/30 -translate-y-0.5" : "bg-accent/20"
           }`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}

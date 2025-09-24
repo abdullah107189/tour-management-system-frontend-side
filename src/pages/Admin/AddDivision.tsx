@@ -9,14 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useGetAllTourTypeQuery,
-  useRemoveTourTypeMutation,
-} from "@/redux/features/TourType/tourType.api";
+import { useGetAllDivisionQuery } from "@/redux/features/Division/division.api";
+import { useRemoveTourTypeMutation } from "@/redux/features/TourType/tourType.api";
+import type { IDivision } from "@/types";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 export default function AddDivision() {
-  const { data, isLoading } = useGetAllTourTypeQuery(undefined);
+  const { data, isLoading } = useGetAllDivisionQuery(undefined);
+  console.log(data);
   const [removeTourType] = useRemoveTourTypeMutation();
 
   const handleDeleteTourType = async (id: string) => {
@@ -46,16 +46,23 @@ export default function AddDivision() {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Image</TableHead>
+
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.data.map((item: { name: string; _id: string }) => (
+          {data?.data.map((item: IDivision) => (
             <TableRow key={item._id}>
               <TableCell>{item.name}</TableCell>
-              <TableCell className="flex justify-end">
+              <TableCell>{item.description}</TableCell>
+              <TableCell>
+                <img className="w-12" src={item?.thumbnail} />
+              </TableCell>
+              <TableCell>
                 <DeleteConfirmation
-                  onConfirm={() => handleDeleteTourType(item._id)}
+                  onConfirm={() => handleDeleteTourType(item?._id as string)}
                 >
                   <Button>
                     <Trash2></Trash2>
