@@ -19,9 +19,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
+import SingleImageUploader from "@/components/SingleImageUploader";
+import { useAddDivisionMutation } from "@/redux/features/Division/division.api";
+import { toast } from "sonner";
 
 export default function AddDivisionModal() {
   const [open, setOpen] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
   const form = useForm({
     defaultValues: {
       name: "",
@@ -29,8 +33,22 @@ export default function AddDivisionModal() {
     },
   });
 
+  const [addDivision, isLoading] = useAddDivisionMutation();
   const onSubmit = async (data: { name: string; description: string }) => {
-    console.log(data);
+    try {
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+      formData.append("file", image as File);
+      const res = await addDivision(formData).unwrap();
+      console.log(res);
+      if (res.success) {
+        toast.success(res?.message || "Division added successFully done");
+        setOpen(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Some think problem");
+    }
   };
 
   return (
@@ -49,7 +67,7 @@ export default function AddDivisionModal() {
 
           <Form {...form}>
             <form
-              id="tour-type-form"
+              id="division-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8"
             >
@@ -82,14 +100,19 @@ export default function AddDivisionModal() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" form="tour-type-form">
-                Submit
-              </Button>
-              {/* <Button type="submit" disabled={isLoading} form="tour-type-form">
-                {isLoading ? "Submitting..." : "Submit"}
-              </Button> */}
             </form>
           </Form>
+          <SingleImageUploader onChange={setImage}></SingleImageUploader>
+          <Button
+            type="submit"
+            disabled={isLoading.isLoading}
+            form="division-form"
+          >
+            {isLoading.isLoading ? "Adding..." : "Add"}
+          </Button>
+          {/* <Button type="submit" form="division-form">
+            Submit
+          </Button> */}
         </DialogContent>
       </Dialog>
     </div>

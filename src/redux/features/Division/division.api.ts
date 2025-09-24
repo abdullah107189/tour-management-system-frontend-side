@@ -12,3 +12,4 @@ export const divisionApi = baseApi.injectEndpoints({
     }),
   }),
 });
+export const { useAddDivisionMutation } = divisionApi;

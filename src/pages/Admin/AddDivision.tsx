@@ -1,6 +1,5 @@
 import DeleteConfirmation from "@/components/DeleteConfirmation";
 import AddDivisionModal from "@/components/modules/Admin/Division/AddDivisionModal";
-import AddTourTypeModal from "@/components/modules/Admin/TourType/AddTourTypeModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,
