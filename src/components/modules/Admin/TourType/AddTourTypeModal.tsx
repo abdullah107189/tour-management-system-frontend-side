@@ -40,7 +40,9 @@ export default function AddTourTypeModal() {
         form.reset();
       }
     } catch (error) {
-      toast.error(error?.data?.message);
+      toast.error(
+        error?.data?.message || "Something went wrong. Please try again."
+      );
       console.error("Failed to add tour type:", error);
     }
   };
