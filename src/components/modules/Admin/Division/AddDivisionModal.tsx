@@ -22,11 +22,33 @@ import { Textarea } from "@/components/ui/textarea";
 import SingleImageUploader from "@/components/SingleImageUploader";
 import { useAddDivisionMutation } from "@/redux/features/Division/division.api";
 import { toast } from "sonner";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function AddDivisionModal() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm({
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, {
+        message: "Name must be at least 1 character.",
+      })
+      .max(50, {
+        message: "Name cannot exceed 50 characters.",
+      }),
+    description: z
+      .string()
+      .min(1, {
+        message: "Description must be at least 1 character.",
+      })
+      .max(200, {
+        message: "Description cannot exceed 200 characters.",
+      }),
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -61,7 +83,7 @@ export default function AddDivisionModal() {
           <DialogHeader>
             <DialogTitle>Add New Division</DialogTitle>
             <DialogDescription>
-              Please enter the details for the new tour type.
+              Please enter the details for the new division.
             </DialogDescription>
           </DialogHeader>
 
@@ -105,7 +127,7 @@ export default function AddDivisionModal() {
           <SingleImageUploader onChange={setImage}></SingleImageUploader>
           <Button
             type="submit"
-            disabled={isLoading.isLoading}
+            disabled={isLoading.isLoading || !image}
             form="division-form"
           >
             {isLoading.isLoading ? "Adding..." : "Add"}
