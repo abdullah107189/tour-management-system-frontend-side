@@ -18,7 +18,6 @@ interface IProps {
 export default function DeleteConfirmation({ children, onConfirm }: IProps) {
   const handleConfirm = () => {
     onConfirm();
-    console.log("confirm");
   };
   return (
     <div className="text-right">

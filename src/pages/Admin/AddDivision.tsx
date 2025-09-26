@@ -16,7 +16,6 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 export default function AddDivision() {
   const { data, isLoading } = useGetAllDivisionQuery(undefined);
-  console.log(data);
   const [removeTourType] = useRemoveTourTypeMutation();
 
   const handleDeleteTourType = async (id: string) => {
@@ -53,7 +52,7 @@ export default function AddDivision() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.data.map((item: IDivision) => (
+          {data?.map((item: IDivision) => (
             <TableRow key={item._id}>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.description}</TableCell>

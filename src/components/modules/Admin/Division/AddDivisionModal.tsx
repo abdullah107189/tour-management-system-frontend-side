@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,9 +68,9 @@ export default function AddDivisionModal() {
         toast.success(res?.message || "Division added successFully done");
         setOpen(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      toast.error("Some think problem");
+      toast.error(error?.data.message || "Some think problem");
     }
   };
 
