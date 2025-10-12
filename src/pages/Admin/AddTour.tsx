@@ -136,7 +136,7 @@ export default function AddTour() {
                         <SelectItem
                           disabled={divisionLoading}
                           key={item?._id}
-                          value={item.name}
+                          value={item?._id as string}
                         >
                           {item.name}
                         </SelectItem>
@@ -170,7 +170,7 @@ export default function AddTour() {
                           <SelectItem
                             disabled={tourTypeLoading}
                             key={item?._id}
-                            value={item.name}
+                            value={item?._id}
                           >
                             {item.name}
                           </SelectItem>
