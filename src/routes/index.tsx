@@ -14,6 +14,7 @@ import { role } from "@/constants/role";
 import type { TRole } from "@/types";
 import NotFound from "@/pages/User/NotFound";
 import HeroSection from "@/components/modules/home/HeroSection";
+import Tour from "@/pages/Tour/Tour";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,14 @@ const router = createBrowserRouter([
   {
     Component: VerifyPage,
     path: "/verify",
+  },
+  {
+    Component: Tour,
+    path: "/tour",
+  },
+  {
+    Component: VerifyPage,
+    path: "/tour-details",
   },
   {
     element: <h1>unauthorized access</h1>,

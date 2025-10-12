@@ -101,13 +101,13 @@ export default function AddTour() {
     images.forEach((image) => formData.append("files", image as File));
     // console.log(tourData);
     // console.log(formData);
-    // try {
-    //   const res = await addTour(formData).unwrap();
-    //   console.log(res);
-    // } catch (error: any) {
-    //   console.log(error);
-    //   console.log(error.message);
-    // }
+    try {
+      const res = await addTour(formData).unwrap();
+      console.log(res);
+    } catch (error: any) {
+      console.log(error);
+      console.log(error.message);
+    }
   };
 
   return (
@@ -318,15 +318,13 @@ export default function AddTour() {
             <div className="flex justify-between items-center">
               <h4 className="text-base font-semibold">Included Items</h4>
 
-              {/* অ্যাকশন বাটন গ্রুপ: Add Item এবং Remove All */}
               <div className="flex gap-2">
-                {/* Remove All Button (যদি কোনো ফিল্ড থাকে তবেই এটি দেখাবে) */}
                 {fields.length > 0 && (
                   <Button
                     type="button"
-                    variant="destructive" // লাল রঙের বাটন
+                    variant="destructive" 
                     size="sm"
-                    onClick={() => remove()} // 👈 কোনো আর্গুমেন্ট ছাড়া remove কল: সব মুছে দেবে
+                    onClick={() => remove()} 
                     className="gap-1.5"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -379,7 +377,7 @@ export default function AddTour() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="text-red-500 hover:text-red-700"
+                    className="text-primary"
                   >
                     <MinusCircle className="h-5 w-5" />
                   </Button>

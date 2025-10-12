@@ -28,6 +28,7 @@ const navigationLinks = [
   { href: "/admin", label: "Dashboard", role: role.admin },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/user", label: "Dashboard", role: role.user },
+  { href: "/tour", label: "Tour", role: "PUBLIC" },
 ];
 
 export default function Navbar() {
@@ -100,7 +101,6 @@ export default function Navbar() {
             <NavigationMenu className="max-md:hidden">
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
-
                   <div key={index}>
                     {link.role === "PUBLIC" && (
                       <NavigationMenuItem>
@@ -123,9 +123,7 @@ export default function Navbar() {
                       </NavigationMenuItem>
                     )}
                   </div>
-                  
                 ))}
-
               </NavigationMenuList>
             </NavigationMenu>
           </div>

@@ -1,8 +1,5 @@
-import React from "react";
-
-// --- Simplified Button Component (from shadcn-like styling) ---
 const Button = ({
-  className,
+  className = "",
   variant = "default",
   size = "default",
   children,
