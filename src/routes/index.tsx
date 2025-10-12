@@ -13,12 +13,19 @@ import { withAuth } from "@/utils/withAuth";
 import { role } from "@/constants/role";
 import type { TRole } from "@/types";
 import NotFound from "@/pages/User/NotFound";
+import HeroSection from "@/components/modules/home/HeroSection";
 
 const router = createBrowserRouter([
   {
-    Component: App,
     path: "/",
-    children: [{ path: "about", Component: About }],
+    Component: App,
+    children: [
+      {
+        index: true,
+        Component: HeroSection,
+      },
+      { path: "about", Component: About },
+    ],
   },
   // {
   //   Component: AdminLayout,

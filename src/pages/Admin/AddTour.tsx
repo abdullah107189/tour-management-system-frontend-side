@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -31,11 +32,15 @@ import { cn } from "@/lib/utils";
 import { format, formatISO } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
+import MultipleImageUploader from "@/components/MultipleImageUploader";
+import { useAddTourMutation } from "@/redux/features/Tour/tour.api";
+import { useState } from "react";
+import type { FileMetadata } from "@/hooks/use-file-upload";
 
 export default function AddTour() {
+  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
   const tourSchema = z.object({
     title: z.string().min(1, "Title is required"),
-    slug: z.string().min(1, "Slug is required"),
     description: z.string().optional(),
     images: z.array(z.string().url()).optional(),
     location: z.string().optional(),
@@ -58,7 +63,6 @@ export default function AddTour() {
     resolver: zodResolver(tourSchema),
     defaultValues: {
       title: "",
-      slug: "",
       images: [],
       division: "",
       tourType: "",
@@ -71,14 +75,25 @@ export default function AddTour() {
     useGetAllDivisionQuery(undefined);
   const { data: tourData, isLoading: tourTypeLoading } =
     useGetAllTourTypeQuery(undefined);
+  const [addTour] = useAddTourMutation();
 
-  const onSubmit = (data: TourFormValues) => {
+  const onSubmit = async (data: TourFormValues) => {
     const tourData = {
       ...data,
       startDate: formatISO(data?.startDate as Date),
       endDate: formatISO(data?.endDate as Date),
     };
-    console.log(tourData);
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(tourData));
+    images.forEach((image) => formData.append("files", image as File));
+    try {
+      const res = await addTour(formData).unwrap();
+      console.log(res);
+    } catch (error: any) {
+      console.log(error);
+      console.log(error.message);
+    }
   };
 
   return (
@@ -90,24 +105,10 @@ export default function AddTour() {
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2">
                   <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter tour title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Slug</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter tour slug" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -271,8 +272,13 @@ export default function AddTour() {
               )}
             />
 
+            <div className="col-span-2">
+              <MultipleImageUploader
+                onChange={setImages}
+              ></MultipleImageUploader>
+            </div>
             {/* Add more fields here in a similar grid layout. For large fields like description, you can make them span multiple columns. */}
-            <div className="md:col-span-2 lg:col-span-2">
+            <div className="col-span-2">
               <FormField
                 control={form.control}
                 name="description"
