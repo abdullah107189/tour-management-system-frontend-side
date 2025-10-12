@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,14 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import z from "zod";
+import z, { includes } from "zod";
 import { useGetAllDivisionQuery } from "@/redux/features/Division/division.api";
 import { useGetAllTourTypeQuery } from "@/redux/features/TourType/tourType.api";
 import type { IDivision } from "@/types";
 import { cn } from "@/lib/utils";
 import { format, formatISO } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { useAddTourMutation } from "@/redux/features/Tour/tour.api";
 import { useState } from "react";
@@ -47,7 +47,7 @@ export default function AddTour() {
     costFrom: z.number().optional(),
     startDate: z.date().optional(),
     endDate: z.date().optional(),
-    included: z.array(z.string()).optional(),
+    included: z.array(z.object({ value: z.string() })).optional(),
     excluded: z.array(z.string()).optional(),
     amenities: z.array(z.string()).optional(),
     tourPlan: z.array(z.string()).optional(),
@@ -68,32 +68,40 @@ export default function AddTour() {
       tourType: "",
       endDate: new Date(),
       startDate: new Date(),
+      included: [{ value: "" }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "included",
   });
 
   const { data: divisionData, isLoading: divisionLoading } =
     useGetAllDivisionQuery(undefined);
   const { data: tourData, isLoading: tourTypeLoading } =
     useGetAllTourTypeQuery(undefined);
-  const [addTour] = useAddTourMutation();
-
+  const [addTour, isLoading] = useAddTourMutation();
   const onSubmit = async (data: TourFormValues) => {
     const tourData = {
       ...data,
       startDate: formatISO(data?.startDate as Date),
       endDate: formatISO(data?.endDate as Date),
+      included: data?.included?.map((item: { value: string }) => item.value),
     };
 
     const formData = new FormData();
     formData.append("data", JSON.stringify(tourData));
     images.forEach((image) => formData.append("files", image as File));
-    try {
-      const res = await addTour(formData).unwrap();
-      console.log(res);
-    } catch (error: any) {
-      console.log(error);
-      console.log(error.message);
-    }
+    // console.log(tourData);
+    // console.log(formData);
+    // try {
+    //   const res = await addTour(formData).unwrap();
+    //   console.log(res);
+    // } catch (error: any) {
+    //   console.log(error);
+    //   console.log(error.message);
+    // }
   };
 
   return (
@@ -297,7 +305,40 @@ export default function AddTour() {
               />
             </div>
           </div>
-          <Button type="submit">Submit</Button>
+          <div className="border-b border-muted"></div>
+          {/* included button  */}
+          <Button type="button" onClick={() => append({ value: "" })}>
+            Add Included
+          </Button>
+          <div>
+            {fields.map((item, index) => (
+              <FormField
+                key={index}
+                control={form.control}
+                name={`included.${index}.value`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2 mb-2">
+                    <FormLabel>Tour Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter tour title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+          <div className="flex items-end justify-end">
+            <Button
+              type="submit"
+              disabled={isLoading.isLoading || images.length === 0}
+            >
+              {isLoading.isLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isLoading.isLoading ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
