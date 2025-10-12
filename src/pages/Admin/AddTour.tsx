@@ -24,14 +24,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import z, { includes } from "zod";
+import z from "zod";
 import { useGetAllDivisionQuery } from "@/redux/features/Division/division.api";
 import { useGetAllTourTypeQuery } from "@/redux/features/TourType/tourType.api";
 import type { IDivision } from "@/types";
 import { cn } from "@/lib/utils";
 import { format, formatISO } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import {
+  CalendarIcon,
+  Loader2,
+  MinusCircle,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { useAddTourMutation } from "@/redux/features/Tour/tour.api";
 import { useState } from "react";
@@ -306,28 +312,88 @@ export default function AddTour() {
             </div>
           </div>
           <div className="border-b border-muted"></div>
-          {/* included button  */}
-          <Button type="button" onClick={() => append({ value: "" })}>
-            Add Included
-          </Button>
-          <div>
-            {fields.map((item, index) => (
-              <FormField
-                key={index}
-                control={form.control}
-                name={`included.${index}.value`}
-                render={({ field }) => (
-                  <FormItem className="col-span-2 mb-2">
-                    <FormLabel>Tour Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter tour title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+
+          {/* Included Items Section */}
+          <div className="space-y-4 rounded-lg border p-4 bg-secondary/10">
+            <div className="flex justify-between items-center">
+              <h4 className="text-base font-semibold">Included Items</h4>
+
+              {/* অ্যাকশন বাটন গ্রুপ: Add Item এবং Remove All */}
+              <div className="flex gap-2">
+                {/* Remove All Button (যদি কোনো ফিল্ড থাকে তবেই এটি দেখাবে) */}
+                {fields.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="destructive" // লাল রঙের বাটন
+                    size="sm"
+                    onClick={() => remove()} // 👈 কোনো আর্গুমেন্ট ছাড়া remove কল: সব মুছে দেবে
+                    className="gap-1.5"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Remove All
+                  </Button>
                 )}
-              />
-            ))}
+
+                {/* Add Item Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ value: "" })}
+                  className="gap-1.5"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  Add Item
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {fields.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 p-2 border rounded-md bg-card shadow-sm"
+                >
+                  {/* Input Field */}
+                  <FormField
+                    control={form.control}
+                    name={`included.${index}.value`}
+                    render={({ field }) => (
+                      <FormItem className="flex-grow m-0">
+                        <FormControl>
+                          <Input
+                            placeholder={`e.g. Hotel stay, Breakfast (Item ${
+                              index + 1
+                            })`}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Individual Remove Button */}
+                  <Button
+                    onClick={() => remove(index)}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <MinusCircle className="h-5 w-5" />
+                  </Button>
+                </div>
+              ))}
+
+              {fields.length === 0 && (
+                <p className="text-sm text-muted-foreground pt-1 italic text-center">
+                  No items added yet. Click 'Add Item' to list inclusions.
+                </p>
+              )}
+            </div>
           </div>
+
           <div className="flex items-end justify-end">
             <Button
               type="submit"
