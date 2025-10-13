@@ -8,8 +8,17 @@ export const tourApi = baseApi.injectEndpoints({
         method: "POST",
         data: tourData,
       }),
+      invalidatesTags: ["TOURS"],
+    }),
+    getAllTour: builder.query({
+      query: () => ({
+        url: "tour",
+        method: "GET",
+      }),
+      providesTags: ["TOURS"],
+      transformResponse: (res) => res.data,
     }),
   }),
 });
 
-export const { useAddTourMutation } = tourApi;
+export const { useAddTourMutation, useGetAllTourQuery } = tourApi;

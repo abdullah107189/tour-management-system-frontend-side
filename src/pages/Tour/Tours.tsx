@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Clock, Calendar } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useGetAllTourQuery } from "@/redux/features/Tour/tour.api";
+import { useGetAllTourTypeQuery } from "@/redux/features/TourType/tourType.api";
 
 const tours = [
   {
@@ -93,8 +95,11 @@ const tours = [
     ],
   },
 ];
-
 export function Tours() {
+  const { data: allTour } = useGetAllTourQuery(undefined);
+  const { data: allTourType } = useGetAllTourTypeQuery(undefined);
+  console.log(allTour);
+  console.log(allTourType);
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -151,7 +156,7 @@ export function Tours() {
                 <img
                   src={tour.image}
                   alt={tour.title}
-                  className="w-full  h-48 object-cover"
+                  className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 border border-border">
                   <span className="text-sm font-semibold text-foreground">

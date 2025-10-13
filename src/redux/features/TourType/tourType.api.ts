@@ -17,6 +17,7 @@ export const tourTypeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["TOUR-TYPE"],
     }),
+    
     getAllTourType: builder.query({
       query: () => ({
         url: "tour/tour-types",

@@ -88,7 +88,6 @@ export default function VerifyPage() {
   // State for the resend timer
   const [resendTimer, setResendTimer] = useState(120);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
-  console.log("timeer", resendTimer);
   // Function to handle the resend logic
   const handleResendOtp = async () => {
     // Disable the button immediately

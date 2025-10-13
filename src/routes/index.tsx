@@ -27,13 +27,16 @@ const router = createBrowserRouter([
         Component: HeroSection,
       },
       { path: "about", Component: About },
-    ],
+      {
+        Component: Tours,
+        path: "/tours",
+      },
+      {
+        Component: TourDetails,
+        path: "/tour-details/:id",
+      },
+    ],  
   },
-  // {
-  //   Component: AdminLayout,
-  //   path: "/admin",
-  //   children: [{ path: "analytics", Component: Analytics }],
-  // },
   {
     Component: withAuth(DashboardLayout, [
       role.admin,
@@ -64,14 +67,6 @@ const router = createBrowserRouter([
   {
     Component: VerifyPage,
     path: "/verify",
-  },
-  {
-    Component: Tours,
-    path: "/tours",
-  },
-  {
-    Component: TourDetails,
-    path: "/tour-details/:id",
   },
   {
     element: <h1>unauthorized access</h1>,
