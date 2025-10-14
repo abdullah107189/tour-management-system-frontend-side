@@ -160,7 +160,7 @@ export function Tours() {
               <CardFooter>
                 <Button
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => navigate(`/tour-details/${tour._id}`)}
+                  onClick={() => navigate(`/tour-details/${tour.slug}`)}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   View Details

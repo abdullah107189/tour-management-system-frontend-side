@@ -33,9 +33,9 @@ const router = createBrowserRouter([
       },
       {
         Component: TourDetails,
-        path: "/tour-details/:id",
+        path: "/tour-details/:slug",
       },
-    ],  
+    ],
   },
   {
     Component: withAuth(DashboardLayout, [

@@ -42,9 +42,11 @@ import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { useAddTourMutation } from "@/redux/features/Tour/tour.api";
 import { useState } from "react";
 import type { FileMetadata } from "@/hooks/use-file-upload";
+import { toast } from "sonner";
 
 export default function AddTour() {
   const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
+  console.log(images);
   const tourSchema = z.object({
     title: z.string().min(1, "Title is required"),
     description: z.string().optional(),
@@ -74,6 +76,7 @@ export default function AddTour() {
       tourType: "",
       endDate: new Date(),
       startDate: new Date(),
+      description: "",
       included: [{ value: "" }],
     },
   });
@@ -102,11 +105,15 @@ export default function AddTour() {
     // console.log(tourData);
     // console.log(formData);
     try {
-      const res = await addTour(formData).unwrap();
-      console.log(res);
+      // const res = await addTour(formData).unwrap();
+      // console.log(res);
+      form.reset();
+      setImages([]);
+      // toast.success(res.message);
     } catch (error: any) {
       console.log(error);
       console.log(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -322,9 +329,9 @@ export default function AddTour() {
                 {fields.length > 0 && (
                   <Button
                     type="button"
-                    variant="destructive" 
+                    variant="destructive"
                     size="sm"
-                    onClick={() => remove()} 
+                    onClick={() => remove()}
                     className="gap-1.5"
                   >
                     <Trash2 className="h-4 w-4" />

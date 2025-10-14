@@ -18,6 +18,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import { useGetSingleTourQuery } from "@/redux/features/Tour/tour.api";
 
 const tourData = {
   id: "1",
@@ -124,7 +125,11 @@ const tourData = {
 };
 
 export function TourDetails() {
-  const { id } = useParams();
+  const { slug } = useParams();
+  const { data: tourInfo, isLoading: tourDetailsLoading } =
+    useGetSingleTourQuery(slug);
+  console.log("loading------->", tourDetailsLoading);
+  console.log(tourInfo);
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
   const [bookingDate, setBookingDate] = useState("");
@@ -164,13 +169,13 @@ export function TourDetails() {
             <div className="mb-8">
               <div className="rounded-lg overflow-hidden mb-4 border border-border">
                 <img
-                  src={tour.gallery[selectedImage]}
+                  src={tourInfo?.images[selectedImage]}
                   alt={tour.title}
                   className="w-full h-96 object-cover"
                 />
               </div>
               <div className="grid grid-cols-4 gap-2">
-                {tour.gallery.map((image, index) => (
+                {tourInfo?.images?.map((image: string, index: number) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
