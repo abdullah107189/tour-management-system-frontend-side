@@ -14,6 +14,7 @@ import { useNavigate } from "react-router";
 import { useGetAllTourQuery } from "@/redux/features/Tour/tour.api";
 import { useGetAllTourTypeQuery } from "@/redux/features/TourType/tourType.api";
 import type { ITour, ITourType } from "@/types/tour.type";
+import { format } from "date-fns";
 
 export function Tours() {
   const navigate = useNavigate();
@@ -25,7 +26,6 @@ export function Tours() {
   const { data: tourTypeResponse, isLoading: isTourTypeLoading } =
     useGetAllTourTypeQuery(undefined);
 
-  console.log(tourResponse?.data);
   const allTours: ITour[] = tourResponse?.data || [];
   const allTourTypes: ITourType[] = (tourTypeResponse as ITourType[]) || [];
 
@@ -36,6 +36,14 @@ export function Tours() {
     }
     return baseCategories;
   }, [allTourTypes]);
+
+  // Function to get tour type name by ID
+  const getTourTypeName = (tourTypeId: string) => {
+    const tourType = tourTypeResponse?.data?.find(
+      (type: ITourType) => type._id === tourTypeId
+    );
+    return tourType?.name || "Adventure";
+  };
 
   if (isTourLoading || isTourTypeLoading) {
     return (
@@ -76,90 +84,97 @@ export function Tours() {
 
         {/* Tours Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {allTours?.map((tour) => (
+          {allTours?.map((tour: ITour) => (
             <Card
               key={tour._id}
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border"
+              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border group cursor-pointer"
             >
-              <div className="relative">
+              {/* Image Section */}
+              <div className="relative overflow-hidden">
                 <img
-                  src={tour.images[0]}
+                  src={tour.images?.[0] || "/placeholder-tour.jpg"}
                   alt={tour.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 border border-border">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300" />
+
+                {/* Price Badge */}
+                <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 border border-border shadow-sm">
                   <span className="text-sm font-semibold text-foreground">
-                    ${tour.costFrom}
+                    ${tour.costFrom || "N/A"}
                   </span>
                 </div>
+
+                {/* Image Counter */}
+                {tour.images && tour.images.length > 1 && (
+                  <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm rounded-full px-2 py-1 border border-border">
+                    <span className="text-xs font-medium text-foreground">
+                      +{tour.images.length - 1}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <CardHeader className="pb-3">
+                {/* Rating and Category */}
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">
-                    {tour.location || "Popular"}
+                  <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-md capitalize">
+                    {getTourTypeName(tour.tourType as string)}
                   </span>
                   <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-chart-4 text-chart-4" />
+                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium text-foreground">
                       4.8
                     </span>
-                    <span className="text-sm text-muted-foreground">(124)</span>
+                    <span className="text-xs text-muted-foreground">(24)</span>
                   </div>
                 </div>
-                <CardTitle className="text-xl text-foreground">
-                  {tour.title}
+
+                {/* Title and Description */}
+                <CardTitle className="text-lg font-bold text-foreground line-clamp-1">
+                  {tour.title || "Untitled Tour"}
                 </CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {tour.description}
+                <CardDescription className="line-clamp-2 text-sm mt-1">
+                  {tour.description ||
+                    "Explore this amazing tour with unforgettable experiences."}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="pb-3">
-                <div className="space-y-2">
+                {/* Tour Details */}
+                <div className="space-y-3">
+                  {/* Start Date */}
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 text-chart-1" />
-                    <span>{tour.location || "Multiple Locations"}</span>
+                    <Calendar className="w-4 h-4 text-blue-500" />
+                    <span>
+                      Starts :{" "}
+                      {tour.startDate
+                        ? format(tour.startDate, "MMM d, yyyy")
+                        : "Flexible"}
+                    </span>
                   </div>
+
+                  {/* Duration */}
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="w-4 h-4 text-chart-2" />
-                    {/* <span>{tour.duration || "Flexible"}</span> */}
-                    333333333
+                    <Clock className="w-4 h-4 text-green-500" />
+                    <span>Duration: 3 days</span>
+                  </div>
+
+                  {/* Location */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 text-red-500" />
+                    <span className="capitalize">
+                      {tour.division || "Multiple Locations"}
+                    </span>
                   </div>
                 </div>
 
-                <div className="mt-3">
-                  <h4 className="text-sm font-semibold mb-2 text-foreground">
-                    Highlights:
-                  </h4>
-                  {/* <div className="flex flex-wrap gap-1">
-                    {tour.highlights?.slice(0, 3).map((highlight, index) => (
-                      <span
-                        key={index}
-                        className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-md"
-                      >
-                        {highlight}
-                      </span>
-                    )) || (
-                      <>
-                        <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-md">
-                          Cultural Experience
-                        </span>
-                        <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-md">
-                          Guided Tours
-                        </span>
-                        <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-md">
-                          Amazing Views
-                        </span>
-                      </>
-                    )}
-                  </div> */}
-                </div>
+                {/* ... Rest of your card content ... */}
               </CardContent>
 
-              <CardFooter>
+              <CardFooter className="pt-2">
                 <Button
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 font-medium"
                   onClick={() => navigate(`/tour-details/${tour.slug}`)}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
