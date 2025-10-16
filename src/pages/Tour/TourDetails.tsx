@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useGetSingleTourQuery } from "@/redux/features/Tour/tour.api";
+import TourDetailsSidebar from "./TourDetailsSidebar";
 
 const tourData = {
   id: "1",
@@ -128,8 +129,7 @@ export function TourDetails() {
   const { slug } = useParams();
   const { data: tourInfo, isLoading: tourDetailsLoading } =
     useGetSingleTourQuery(slug);
-  console.log("loading------->", tourDetailsLoading);
-  console.log(tourInfo);
+
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
   const [bookingDate, setBookingDate] = useState("");
@@ -145,20 +145,36 @@ export function TourDetails() {
     );
   }
 
+  if (tourDetailsLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+        <p className="ml-4 text-lg text-muted-foreground">
+          Tour Information is loading...
+        </p>
+      </div>
+    );
+  }
+
+  if (!tourInfo) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl text-red-500">Sorry! This tour is not found.</p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card shadow-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/tours")}
-            className="flex items-center gap-2 text-foreground hover:bg-accent"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Tours
-          </Button>
-        </div>
+      <div className="container mx-auto px-4 py-4">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/tours")}
+          className="flex items-center gap-2 text-foreground hover:bg-accent"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Tours
+        </Button>
       </div>
 
       <div className="container mx-auto px-4 py-8">
@@ -374,7 +390,7 @@ export function TourDetails() {
           </div>
 
           {/* Booking Sidebar */}
-          <div className="lg:col-span-1">
+          {/* <div className="lg:col-span-1">
             <Card className="sticky top-8 border-border">
               <CardHeader>
                 <CardTitle className="text-foreground">
@@ -419,7 +435,8 @@ export function TourDetails() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
+          <TourDetailsSidebar tour={tour}></TourDetailsSidebar>
         </div>
       </div>
     </div>
