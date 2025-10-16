@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Plus, Minus, Calendar, Shield, CreditCard, Clock } from "lucide-react";
 import {
   Card,
@@ -10,12 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import type { ITour } from "@/types/tour.type";
 
-export default function TourDetailsSidebar(tour: ITour) {
+interface TourDetailsSidebarProps {
+  tour: ITour;
+}
+
+export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
   const [bookingDate, setBookingDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [guests, setGuests] = useState(1); // ✅ শুধুই total guest count
+  const [guests, setGuests] = useState(1);
 
+  // ✅ costFrom use করছি (তোমার database field)
   const calculateTotalPrice = () => {
     const basePrice = tour.costFrom || 1;
     const serviceFee = basePrice * guests * 0.1;
@@ -29,6 +34,7 @@ export default function TourDetailsSidebar(tour: ITour) {
       date: bookingDate,
       guests,
       totalPrice,
+      tourId: tour._id // ✅ _id use করছি
     });
   };
 

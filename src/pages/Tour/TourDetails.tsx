@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
@@ -8,142 +9,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Star,
-  MapPin,
-  Clock,
-  Users,
-  Calendar,
-  ArrowLeft,
-  Check,
-  X,
-} from "lucide-react";
-import { useGetSingleTourQuery } from "@/redux/features/Tour/tour.api";
+import { Star, MapPin, Clock, Users, ArrowLeft, Check, X } from "lucide-react";
 import TourDetailsSidebar from "./TourDetailsSidebar";
+import { useGetSingleTourQuery } from "@/redux/features/Tour/tour.api";
+import type { ITour } from "@/types/tour.type";
+import { format } from "date-fns";
 
-const tourData = {
-  id: "1",
-  title: "Bali Cultural Experience",
-  description:
-    "Explore the rich culture and beautiful landscapes of Bali with our comprehensive tour package. This immersive journey takes you through ancient temples, traditional villages, and stunning natural wonders.",
-  price: 899,
-  duration: "7 days",
-  location: "Bali, Indonesia",
-  image:
-    "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-  rating: 4.8,
-  reviews: 124,
-  category: "Cultural",
-  groupSize: "2-12 people",
-  highlights: [
-    "Visit ancient temples including Tanah Lot and Uluwatu",
-    "Traditional Balinese dance performances",
-    "Local market exploration in Ubud",
-    "Beach relaxation in Seminyak",
-    "Rice terrace trekking",
-    "Traditional cooking class",
-  ],
-  included: [
-    "6 nights accommodation in 4-star hotels",
-    "Daily breakfast and 4 dinners",
-    "Professional English-speaking guide",
-    "All transportation during the tour",
-    "Entrance fees to all attractions",
-    "Traditional dance performance tickets",
-  ],
-  excluded: [
-    "International flight tickets",
-    "Travel insurance",
-    "Lunches and some dinners",
-    "Personal expenses",
-    "Visa fees (if applicable)",
-    "Optional activities",
-  ],
-  itinerary: [
-    {
-      day: 1,
-      title: "Arrival in Bali",
-      description:
-        "Welcome to the Island of Gods! Transfer to your hotel and enjoy a welcome dinner.",
-      activities: ["Airport pickup", "Hotel check-in", "Welcome dinner"],
-    },
-    {
-      day: 2,
-      title: "Ubud Cultural Discovery",
-      description:
-        "Explore the cultural heart of Bali with visits to temples and art markets.",
-      activities: [
-        "Ubud Palace",
-        "Art market",
-        "Traditional dance performance",
-      ],
-    },
-    {
-      day: 3,
-      title: "Rice Terraces & Cooking Class",
-      description:
-        "Trek through stunning rice terraces and learn authentic Balinese cooking.",
-      activities: [
-        "Tegalalang Rice Terraces",
-        "Cooking class",
-        "Local village visit",
-      ],
-    },
-    {
-      day: 4,
-      title: "Temple Tour",
-      description:
-        "Visit Bali's most iconic temples perched on dramatic cliff sides.",
-      activities: ["Tanah Lot Temple", "Uluwatu Temple", "Kecak fire dance"],
-    },
-    {
-      day: 5,
-      title: "Beach Relaxation",
-      description:
-        "Enjoy a day at one of Bali's most beautiful beaches with optional water sports.",
-      activities: ["Seminyak Beach", "Beach clubs", "Water sports (optional)"],
-    },
-    {
-      day: 6,
-      title: "Free Day & Optional Activities",
-      description: "Choose your own adventure or relax at your leisure.",
-      activities: ["Spa treatments", "Shopping", "Surf lessons", "Free time"],
-    },
-    {
-      day: 7,
-      title: "Departure",
-      description:
-        "Transfer to the airport for your departure with unforgettable memories.",
-      activities: ["Hotel check-out", "Airport transfer"],
-    },
-  ],
-  gallery: [
-    "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1506003094589-53954a26283f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-  ],
-};
-
+function isValidDate(date: any): boolean {
+  const dateObject = new Date(date);
+  return !isNaN(dateObject.getTime()); // Returns true if it's a valid date
+}
 export function TourDetails() {
   const { slug } = useParams();
   const { data: tourInfo, isLoading: tourDetailsLoading } =
-    useGetSingleTourQuery(slug);
+    useGetSingleTourQuery(slug) as { data: ITour; isLoading: boolean };
 
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [bookingDate, setBookingDate] = useState("");
-
-  // In a real app, you would fetch tour data based on the ID
-  const tour = tourData;
-
-  if (!tour) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-foreground">Tour not found</p>
-      </div>
-    );
-  }
 
   if (tourDetailsLoading) {
     return (
@@ -152,6 +34,14 @@ export function TourDetails() {
         <p className="ml-4 text-lg text-muted-foreground">
           Tour Information is loading...
         </p>
+      </div>
+    );
+  }
+
+  if (!tourInfo) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-foreground">Tour not found</p>
       </div>
     );
   }
@@ -186,7 +76,7 @@ export function TourDetails() {
               <div className="rounded-lg overflow-hidden mb-4 border border-border">
                 <img
                   src={tourInfo?.images[selectedImage]}
-                  alt={tour.title}
+                  alt={tourInfo?.title}
                   className="w-full h-96 object-cover"
                 />
               </div>
@@ -203,7 +93,7 @@ export function TourDetails() {
                   >
                     <img
                       src={image}
-                      alt={`${tour.title} ${index + 1}`}
+                      alt={`${tourInfo?.title} ${index + 1}`}
                       className="w-full h-20 object-cover"
                     />
                   </button>
@@ -217,15 +107,15 @@ export function TourDetails() {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                      {tour.category}
+                      {tourInfo?.location}
                     </span>
                     <CardTitle className="text-3xl mt-2 text-foreground">
-                      {tour.title}
+                      {tourInfo?.title}
                     </CardTitle>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-foreground">
-                      ${tour.price}
+                      ${tourInfo?.costFrom}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       per person
@@ -233,7 +123,7 @@ export function TourDetails() {
                   </div>
                 </div>
                 <CardDescription className="text-lg">
-                  {tour.description}
+                  {tourInfo?.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -245,7 +135,7 @@ export function TourDetails() {
                         Location
                       </div>
                       <div className="text-muted-foreground">
-                        {tour.location}
+                        {tourInfo?.location}
                       </div>
                     </div>
                   </div>
@@ -253,10 +143,22 @@ export function TourDetails() {
                     <Clock className="w-5 h-5 text-chart-2" />
                     <div>
                       <div className="font-semibold text-foreground">
-                        Duration
+                        start Date
                       </div>
                       <div className="text-muted-foreground">
-                        {tour.duration}
+                        {format(tourInfo?.startDate as Date, "yyyy-MM-dd") ||
+                          "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-foreground">
+                        End Date
+                      </div>
+                      <div className="text-muted-foreground">
+                        {tourInfo?.endDate &&
+                        isValidDate(tourInfo.endDate as Date)
+                          ? format(tourInfo.endDate as Date, "yyyy-MM-dd")
+                          : "N/A"}
                       </div>
                     </div>
                   </div>
@@ -264,10 +166,10 @@ export function TourDetails() {
                     <Users className="w-5 h-5 text-chart-3" />
                     <div>
                       <div className="font-semibold text-foreground">
-                        Group Size
+                        Max Guests
                       </div>
                       <div className="text-muted-foreground">
-                        {tour.groupSize}
+                        {tourInfo?.maxGuests}
                       </div>
                     </div>
                   </div>
@@ -275,12 +177,7 @@ export function TourDetails() {
 
                 <div className="flex items-center gap-2 mb-6">
                   <Star className="w-5 h-5 fill-chart-4 text-chart-4" />
-                  <span className="font-semibold text-foreground">
-                    {tour.rating}
-                  </span>
-                  <span className="text-muted-foreground">
-                    ({tour.reviews} reviews)
-                  </span>
+                  <span className="font-semibold text-foreground">4.3 </span>
                 </div>
               </CardContent>
             </Card>
@@ -292,16 +189,6 @@ export function TourDetails() {
                   Tour Highlights
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {tour.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-foreground">{highlight}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
             </Card>
 
             {/* Itinerary */}
@@ -312,39 +199,6 @@ export function TourDetails() {
                   Day-by-day breakdown of your tour
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {tour.itinerary.map((day) => (
-                    <div
-                      key={day.day}
-                      className="border-l-4 border-primary pl-6 pb-6"
-                    >
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                          {day.day}
-                        </div>
-                        <h3 className="text-xl font-semibold text-foreground">
-                          {day.title}
-                        </h3>
-                      </div>
-                      <p className="text-muted-foreground mb-3">
-                        {day.description}
-                      </p>
-                      <div className="space-y-1">
-                        {day.activities.map((activity, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <Check className="w-4 h-4 text-chart-2" />
-                            <span className="text-foreground">{activity}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
             </Card>
 
             {/* What's Included */}
@@ -358,7 +212,7 @@ export function TourDetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {tour.included.map((item, index) => (
+                    {tourInfo?.included?.map((item, index) => (
                       <div key={index} className="flex items-center gap-3">
                         <Check className="w-4 h-4 text-chart-2" />
                         <span className="text-foreground">{item}</span>
@@ -377,7 +231,7 @@ export function TourDetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {tour.excluded.map((item, index) => (
+                    {tourInfo?.excluded?.map((item, index) => (
                       <div key={index} className="flex items-center gap-3">
                         <X className="w-4 h-4 text-chart-5" />
                         <span className="text-foreground">{item}</span>
@@ -414,11 +268,11 @@ export function TourDetails() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-foreground">
                     <span>Tour Price</span>
-                    <span>${tour.price}</span>
+                    <span>${tourInfo?.price}</span>
                   </div>
                   <div className="flex justify-between font-semibold text-lg border-t border-border pt-2 text-foreground">
                     <span>Total</span>
-                    <span>${tour.price}</span>
+                    <span>${tourInfo?.price}</span>
                   </div>
                 </div>
 
@@ -436,7 +290,7 @@ export function TourDetails() {
               </CardContent>
             </Card>
           </div> */}
-          <TourDetailsSidebar tour={tour}></TourDetailsSidebar>
+          <TourDetailsSidebar tour={tourInfo}></TourDetailsSidebar>
         </div>
       </div>
     </div>

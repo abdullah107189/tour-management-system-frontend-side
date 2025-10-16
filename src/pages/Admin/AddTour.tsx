@@ -106,8 +106,8 @@ export default function AddTour() {
     // console.log(tourData);
     // console.log(formData);
     try {
-      // const res = await addTour(formData).unwrap();
-      // console.log(res);
+      const res = await addTour(formData).unwrap();
+      console.log(res);
       form.reset();
       setImages([]);
       // toast.success(res.message);
