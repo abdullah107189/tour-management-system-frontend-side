@@ -77,6 +77,7 @@ export default function AddTour() {
       endDate: new Date(),
       startDate: new Date(),
       description: "",
+      costFrom: Number(0),
       included: [{ value: "" }],
     },
   });
@@ -299,7 +300,7 @@ export default function AddTour() {
               ></MultipleImageUploader>
             </div>
             {/* Add more fields here in a similar grid layout. For large fields like description, you can make them span multiple columns. */}
-            <div className="col-span-2">
+            <div className="">
               <FormField
                 control={form.control}
                 name="description"
@@ -317,6 +318,28 @@ export default function AddTour() {
                 )}
               />
             </div>
+
+            {/* costFrom  */}
+            <FormField
+              control={form.control}
+              name="costFrom"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Tour Cost</FormLabel>
+
+                  <FormControl className="w-full">
+                    <Input
+                      min={1}
+                      type="number"
+                      placeholder="Enter tour Cost"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="border-b border-muted"></div>
 
