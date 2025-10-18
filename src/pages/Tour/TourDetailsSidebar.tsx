@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Plus, Minus, Calendar, Shield, CreditCard, Clock } from "lucide-react";
+import {
+  Plus,
+  Minus,
+  Calendar,
+  Shield,
+  CreditCard,
+  Clock,
+  CalendarIcon,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -7,60 +15,65 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import type { ITour } from "@/types/tour.type";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 
 interface TourDetailsSidebarProps {
   tour: ITour;
 }
 
 export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
-  const [bookingDate, setBookingDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
   const [guests, setGuests] = useState(1);
 
-  // ✅ costFrom use করছি (তোমার database field)
   const calculateTotalPrice = () => {
     const basePrice = tour.costFrom || 1;
-    const serviceFee = basePrice * guests * 0.1;
-    const total = basePrice * guests + serviceFee;
+    const total = basePrice * guests;
     return Math.round(total * 100) / 100;
   };
 
-  const handleBooking = () => {
-    const totalPrice = calculateTotalPrice();
-    console.log("Booking Details:", {
-      date: bookingDate,
-      guests,
-      totalPrice,
-      tourId: tour._id // ✅ _id use করছি
-    });
+  const tourBooking = z.object({
+    maxGuests: z.int(),
+    tour: z.string(),
+  });
+
+  const handleBooking = async () => {
+    const bookingData = {
+      maxGuests: guests,
+      tour: tour._id,
+    };
+    console.log(bookingData);
+    try {
+      const validatedData = tourBooking.parse(bookingData);
+      
+    } catch (error) {}
   };
 
   return (
     <div className="lg:col-span-1">
-      <Card className="sticky top-8 border-border">
+      <Card className=" border-border">
         <CardHeader>
           <CardTitle className="text-foreground">Book This Tour</CardTitle>
           <CardDescription>Secure your spot today</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Date Picker */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              Select Date
-            </label>
-            <input
-              type="date"
-              value={bookingDate}
-              onChange={(e) => setBookingDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]}
-              className="w-full p-3 border border-input bg-background rounded-md text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-          </div>
-
           {/* Guests Count */}
           <div>
             <label className="block text-sm font-medium mb-3 text-foreground">
@@ -104,12 +117,7 @@ export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
               </span>
               <span>${(tour.costFrom || 1) * guests}</span>
             </div>
-            <div className="flex justify-between text-muted-foreground text-sm">
-              <span>Service fee</span>
-              <span>
-                ${Math.round((tour.costFrom || 1) * guests * 0.1 * 100) / 100}
-              </span>
-            </div>
+            <div className="flex justify-between text-muted-foreground text-sm"></div>
             <div className="flex justify-between font-semibold text-lg border-t border-border pt-3 text-foreground">
               <span>Total</span>
               <span>${calculateTotalPrice()}</span>

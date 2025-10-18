@@ -52,7 +52,7 @@ export default function AddTour() {
     description: z.string().optional(),
     images: z.array(z.string().url()).optional(),
     location: z.string().optional(),
-    costFrom: z.number().optional(),
+    costFrom: z.coerce.number().optional(),
     startDate: z.date().optional(),
     endDate: z.date().optional(),
     included: z.array(z.object({ value: z.string() })).optional(),
