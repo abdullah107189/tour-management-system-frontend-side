@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Plus,
   Minus,
@@ -6,7 +6,7 @@ import {
   Shield,
   CreditCard,
   Clock,
-  CalendarIcon,
+  Loader2,
 } from "lucide-react";
 import {
   Card,
@@ -15,32 +15,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import type { ITour } from "@/types/tour.type";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-
+import { useCreateBookingMutation } from "@/redux/features/Booking/booking.api";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 interface TourDetailsSidebarProps {
   tour: ITour;
 }
 
 export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
   const [guests, setGuests] = useState(1);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const handleBookButtonClick = () => {
+    setIsAlertOpen(true);
+  };
 
   const calculateTotalPrice = () => {
     const basePrice = tour.costFrom || 1;
@@ -49,20 +48,30 @@ export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
   };
 
   const tourBooking = z.object({
-    maxGuests: z.int(),
+    guestCount: z.number().int().positive(),
     tour: z.string(),
   });
 
+  const [createBooking, isLoading] = useCreateBookingMutation();
+
   const handleBooking = async () => {
     const bookingData = {
-      maxGuests: guests,
+      guestCount: Number(guests),
       tour: tour._id,
     };
-    console.log(bookingData);
+    setIsAlertOpen(false);
+
     try {
       const validatedData = tourBooking.parse(bookingData);
-      
-    } catch (error) {}
+      console.log(validatedData);
+      const booking = await createBooking(validatedData).unwrap();
+      toast.success("Booking created successfully!");
+      console.log(booking);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.data?.message || error?.message);
+    }
   };
 
   return (
@@ -128,10 +137,15 @@ export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
           <Button
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 font-medium py-3 text-base"
             size="lg"
-            onClick={handleBooking}
+            onClick={handleBookButtonClick}
+            disabled={isLoading.isLoading}
+            type="button"
           >
+            {isLoading.isLoading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
             <Calendar className="w-4 h-4 mr-2" />
-            Book Now
+            {isLoading.isLoading ? "Booking..." : "Book Now"}
           </Button>
 
           {/* Extra Info */}
@@ -151,6 +165,26 @@ export default function TourDetailsSidebar({ tour }: TourDetailsSidebarProps) {
           </div>
         </CardContent>
       </Card>
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Your Booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to book this tour for{" "}
+              <span className="font-semibold">{guests} </span> guest
+              {guests > 1 ? "s" : ""}. The total cost will be{" "}
+              <span className="font-semibold">${calculateTotalPrice()}</span>.
+              Do you want to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBooking}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

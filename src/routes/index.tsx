@@ -32,7 +32,7 @@ const router = createBrowserRouter([
         path: "/tours",
       },
       {
-        Component: TourDetails,
+        Component: withAuth(TourDetails),
         path: "/tour-details/:slug",
       },
     ],

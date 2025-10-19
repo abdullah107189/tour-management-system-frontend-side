@@ -28,7 +28,11 @@ const navigationLinks = [
   { href: "/admin", label: "Dashboard", role: role.admin },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/user", label: "Dashboard", role: role.user },
-  { href: "/tours", label: "Tours", role: "PUBLIC" },
+  {
+    href: "/tours",
+    label: "Tours",
+    role: "PUBLIC",
+  },
 ];
 
 export default function Navbar() {
@@ -113,7 +117,7 @@ export default function Navbar() {
                       </NavigationMenuItem>
                     )}
                     {link.role === userData?.data?.role && (
-                      <NavigationMenuItem key={index}>
+                      <NavigationMenuItem>
                         <NavigationMenuLink
                           asChild
                           className="text-muted-foreground hover:text-primary py-1.5 font-medium"

@@ -66,8 +66,9 @@ export default function AddTour() {
     deleteImages: z.array(z.string()).optional(),
   });
   type TourFormValues = z.infer<typeof tourSchema>;
+  type TourFormInput = z.input<typeof tourSchema>;
 
-  const form = useForm<TourFormValues>({
+  const form = useForm<TourFormInput>({
     resolver: zodResolver(tourSchema),
     defaultValues: {
       title: "",
@@ -77,7 +78,7 @@ export default function AddTour() {
       endDate: new Date(),
       startDate: new Date(),
       description: "",
-      costFrom: Number(0),
+      costFrom: undefined,
       included: [{ value: "" }],
     },
   });
@@ -91,10 +92,13 @@ export default function AddTour() {
     useGetAllDivisionQuery(undefined);
   const { data: tourData, isLoading: tourTypeLoading } =
     useGetAllTourTypeQuery(undefined);
+
   const [addTour, isLoading] = useAddTourMutation();
-  const onSubmit = async (data: TourFormValues) => {
+
+  const onSubmit = async (data: TourFormInput) => {
+    const validatedData = data as TourFormValues;
     const tourData = {
-      ...data,
+      ...validatedData,
       startDate: formatISO(data?.startDate as Date),
       endDate: formatISO(data?.endDate as Date),
       included: data?.included?.map((item: { value: string }) => item.value),
@@ -333,6 +337,14 @@ export default function AddTour() {
                       type="number"
                       placeholder="Enter tour Cost"
                       {...field}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === "" ? undefined : value);
+                      }}
+                      value={(field.value as number) ?? 0}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
 
